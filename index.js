@@ -119,3 +119,26 @@ app.get('/', async (req, res, next) => {
     }
 })
 
+// Method POST
+app.post(
+    '/biodata',
+    validateBody(biodataSchema),
+    async (req, res, next) => {
+        try {
+            const { id, nama, nim, kelas } = req.body
+
+            const result = await pool.query(
+                'INSERT INTO biodata (id, nama, nim, kelas) VALUES ($1, $2, $3, $4) RETURNING *',
+                [id, nama, nim, kelas]
+            )
+            return successResponse(res, "Data inserted successfully", result.rows[0], 201)
+        } catch (err) {
+            // Handle PostgreSQL Unique Violation (e.g., duplicate NIM or ID)
+            if (err.code === '23505') {
+                return errorResponse(res, "Data with the same NIM or ID already exists", 400, err.detail)
+            }
+            next(err)
+        }
+    }
+)
+
