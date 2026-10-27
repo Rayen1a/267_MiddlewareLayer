@@ -109,3 +109,13 @@ function validateParams(schema) {
     }
 }
 
+// Method GET
+app.get('/', async (req, res, next) => {
+    try {
+        const result = await pool.query('SELECT * FROM biodata ORDER BY id')
+        return successResponse(res, "Data retrieved successfully", result.rows)
+    } catch (err) {
+        next(err)
+    }
+})
+
