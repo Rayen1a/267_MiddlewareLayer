@@ -197,3 +197,17 @@ app.delete(
     }
 )
 
+// Route Tidak Ditemukan
+app.use((req, res) => {
+    return errorResponse(res, "Route not found", 404)
+})
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+    return errorResponse(res, "Internal Server Error", 500)
+})
+
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`)
+})
